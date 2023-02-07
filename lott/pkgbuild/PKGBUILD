@@ -1,0 +1,11 @@
+pkgname="Lott"
+pkgver="1.0.0"
+pkgrel="1"
+pkgdesc="Personal Assistant for AxOS"
+arch=("x86_64")
+
+package() {
+  mkdir -p "${pkgdir}/usr/bin/"
+  cp "/home/ardox/Documents/lott/lott" "${pkgdir}/usr/bin/lott"
+  cp -r "/home/ardox/Documents/lott/lott.d" "${pkgdir}/usr/bin/"
+}
