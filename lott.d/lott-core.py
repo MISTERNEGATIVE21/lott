@@ -11,8 +11,10 @@ import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 from googletrans import Translator
 import re
+from bs4 import BeautifulSoup
+import nltk
 
-
+nltk.download('punkt')
 
 #r = sr.Recognizer()
 #windowstate = False
@@ -52,8 +54,8 @@ def get_entry(key):
 
 
 
-name_keywords = ["ton nom", "appelles", "appelle", "qui" and "tu"]
-time_keywords = ["heure", "date", "jour"]
+name_keywords = ["ton nom", "appelles", "appelle", "qui"]
+time_keywords = ["heure", "date", "on est"]
 window_keywords_open = ["fenêtre" and "ouvre"]
 window_keywords_close = ["fenêtre" and "ferme"]
 weather_keywords = ["météo", "temps", "prévisions"]
@@ -68,6 +70,7 @@ music_keywords = ["joue"]
 opinion_keywords = ['que pense tu', 'que penses tu', 'ton avis', 'ton opinion']
 alarm_keywords = ["alarme", "rappel"]
 actu_keywords = ["actu", "aujourd"]
+axos_keywords = ["AxOS", "axos", "Axos", "axOS"]
 
 def filtre(msg):
     msg = msg.replace("cherche",'')
@@ -163,17 +166,30 @@ def answer_question(question):
         sp.start_playback(uris=['spotify:track:{}'.format(piste_id)])
     elif any(keyword in question for keyword in opinion_keywords):
         print("en tant que assistant virtuel, je ne peux pas avoir d'avis ou d'opinion.")
-    elif any(keyword in question for keyword in alarm_keywords):
-        hour = input("a quelle heure voulez vous ajouter une alarme ? ")
-        os.system("")
-        print("Une alarme a été défini a "+hour)
     elif any(keyword in question for keyword in actu_keywords):
         actu = ''
         print("voici l'actualité du jour :")
         print(actu)
+    elif any(keyword in question for keyword in axos_keywords):
+        print("AxOS et une distributuon linux qui se base sur l'apparence et les performances. Il a été créé par Ardox, qui est mon créateur.")
 
     else:
-        print("Je suis désolé, je ne comprends pas la question.")
+        question = question.replace(' ', '+')
+        url = f"https://www.google.com/search?q={question}"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            answer_divs = soup.find_all('div', {'class': ['Z0LcW t2b5Cf', 'sXLaOe', 'LGOjhe']})
+            answer = answer_divs[0].get_text() if answer_divs else "Désolé, je n'ai pas trouvé de réponse à votre question."
+            print(answer)
+
+        else:
+            print(f"La requête a échoué avec le code d'état {response.status_code}.")
+
 
 
 
