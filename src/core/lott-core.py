@@ -1,7 +1,6 @@
 import requests
 import webbrowser
 from googlesearch import search
-import pyttsx3
 import datetime
 import json
 import speech_recognition as sr
@@ -10,16 +9,18 @@ import spotipy
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 from googletrans import Translator
-import re
-from bs4 import BeautifulSoup
-import nltk
-import wikipediaapi
 
 
+# write here the API KEYS
+username = 'USERNAME_SPOTIFY' # Your spotify username
+client_id = 'CLIENT_ID' # Your spotipy client id
+client_secret = 'CLIENT_SEC' # Your spotipy client secret
+openweatherapi = 'OPENWEATHER_API_KEY' # Openweather API Key
+openaiapikey = 'OPENAI_KEY' # Your OpenAI API key
 
-username = 'ardox'
-client_id = 'CLIENTID' #your spotipy client id
-client_secret = 'CLIENTSEC' #your spotipy client secret
+#End of api Keys
+
+
 memory = "/bin/lott.d/memoire.json"
 googlesearch = "https://www.google.com/search?q="
 auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
@@ -96,7 +97,7 @@ def get_name():
     return name
 
 def get_weather(city):
-    API_KEY = "YOUR_OPENWEATHER_API_KEY"
+    API_KEY = openweatherapi
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
     response = requests.get(url)
     if response.status_code == 200:
@@ -157,10 +158,20 @@ def answer_question(question):
     elif any(keyword in question for keyword in axos_keywords):
         print("")
         print("AxOS et une distributuon linux qui se base sur l'apparence et les performances. Il a été créé par Ardox, qui est mon créateur.")
+    elif any(keyword in question for keyword in music_keywords):
+        msgfiltre = filtre(question)
+        print("Super, jouons!"+msgfiltre)
+        resultats = sp.search(q=msgfiltre, limit=1, type='track')
+        if len(resultats['tracks']['items']) > 0:
+            piste_id = resultats['tracks']['items'][0]['id']
+        else:
+            print("Aucune piste trouvée pour la recherche : {}".format(msgfiltre))
+            exit()
+        sp.start_playback(uris=['spotify:track:{}'.format(piste_id)])
 
     else:
         import openai
-        openai.api_key = "YOUR_OPENAI_KEY"
+        openai.api_key = openaiapikey
         chatbot_name = "Lott"
         response = openai.Completion.create(
         engine="text-davinci-003",
