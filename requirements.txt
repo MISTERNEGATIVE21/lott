@@ -6,7 +6,3 @@
  speech_recognition
  spotipy
  googletrans
- re
- bs4
- nltk
- wikipediaapi
