@@ -17,11 +17,10 @@ client_id = 'CLIENT_ID' # Your spotipy client id
 client_secret = 'CLIENT_SEC' # Your spotipy client secret
 openweatherapi = 'OPENWEATHER_API_KEY' # Openweather API Key
 openaiapikey = 'OPENAI_KEY' # Your OpenAI API key
-
 #End of api Keys
 
 
-memory = "/bin/lott.d/memoire.json"
+memory = "/usr/share/lott/memoire.json"
 googlesearch = "https://www.google.com/search?q="
 auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(auth_manager=auth_manager)
